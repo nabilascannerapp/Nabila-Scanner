@@ -109,6 +109,30 @@
       font-size: 23px;
       color: #555;
     }
+    #gambarDesain {
+  display: none;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto 0;
+  padding: 16px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+
+.judulGambar {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+#previewDesain {
+  display: block;
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 12px;
+}
   </style>
 </head>
 
@@ -124,7 +148,12 @@
       Arahkan kamera ke barcode pesanan.
     </span>
   </div>
-
+  
+<div id="gambarDesain">
+  <div class="judulGambar">🖼️ DESAIN FINAL</div>
+  <img id="previewDesain" src="" alt="Desain Final">
+</div>
+  
   <div id="pilihan">
 
     <div id="pertanyaan">
@@ -170,7 +199,21 @@
     let nomorPesanan = "";
     let sedangMemproses = false;
     let statusPesananSaatIni = "";
+    
+function tampilkanGambarDesain(url) {
 
+  const kotak = document.getElementById("gambarDesain");
+  const gambar = document.getElementById("previewDesain");
+
+  if (!url) {
+    kotak.style.display = "none";
+    gambar.src = "";
+    return;
+  }
+
+  gambar.src = url;
+  kotak.style.display = "block";
+}
 
     // =====================================================
     // MULAI SCANNER
@@ -316,7 +359,8 @@
 
 statusPesananSaatIni = status;
 
-
+tampilkanGambarDesain(data.gambar || "");
+          
           // ===============================================
           // FINISHING
           // ===============================================
@@ -564,7 +608,7 @@ if (status === "ANTRIAN PACKING") {
 
       document.getElementById("pilihan").style.display =
         "none";
-
+tampilkanGambarDesain("");
 
       // ===================================================
       // 2,5 DETIK KEMUDIAN SCAN LAGI
@@ -645,3 +689,4 @@ if (status === "ANTRIAN PACKING") {
 
 </body>
 </html>
+
