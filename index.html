@@ -524,11 +524,14 @@
 
 
           nomorPesanan =
-            decodedText.trim();
+  decodedText
+    .trim()
+    .replace(/^\]C1/, "");
 
 
           if (!nomorPesanan) return;
-
+          
+tampilkanGambarDesain("");
 
           sedangMemproses = true;
 
@@ -1201,7 +1204,7 @@
           "Arahkan kamera ke barcode pesanan.";
 
 
-        tampilkanGambarDesain("");
+    
 
 
         // =================================================
