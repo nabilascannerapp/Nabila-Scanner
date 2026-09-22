@@ -37,8 +37,8 @@
        ===================================================== */
 
     #reader {
-      width: min(92vw, 380px);
-      height: min(52vw, 215px);
+      width: 88vw;
+      max-width: 500px;
 
       margin: 0 auto;
 
@@ -47,8 +47,6 @@
       border-radius: 16px;
 
       overflow: hidden;
-
-      position: relative;
     }
 
 
@@ -217,8 +215,7 @@
 
       #reader {
         width: 88vw;
-        height: 49vw;
-        max-height: 190px;
+        max-width: 380px;
         border-radius: 14px;
       }
 
@@ -384,58 +381,51 @@
         });
 
 
-      const lebarLayar =
-        window.innerWidth;
-
-
-      /*
-       * BARCODE KAMU PANJANG.
-       *
-       * Kotak dibuat melebar tapi tidak memenuhi layar.
-       */
-
-      const qrWidth =
-        Math.min(
-          300,
-          Math.floor(lebarLayar * 0.76)
-        );
-
-
-      const qrHeight =
-        Math.min(
-          95,
-          Math.floor(lebarLayar * 0.25)
-        );
-
-
       scanner.start(
 
+        /* KAMERA BELAKANG */
+
         {
-          facingMode: {
-            exact: "environment"
-          }
+          facingMode: "environment"
         },
 
 
         {
 
           /*
-           * 15 lebih agresif daripada 10.
-           * Cocok untuk barcode linear.
+           * FPS 10 supaya HP tidak terlalu berat
            */
 
-          fps: 15,
+          fps: 10,
 
 
-          qrbox: {
-            width: qrWidth,
-            height: qrHeight
-          },
+          /*
+           * BARCODE PANJANG
+           *
+           * Kotak scan dibuat lebih kecil
+           * tetapi tetap cukup lebar untuk barcode.
+           */
 
+          qrbox: function(viewfinderWidth, viewfinderHeight) {
 
-          aspectRatio: 1.777778,
+            const width =
+              Math.min(
+                360,
+                Math.floor(viewfinderWidth * 0.82)
+              );
 
-          disableFlip: true
+            const height =
+              Math.min(
+                120,
+                Math.floor(viewfinderHeight * 0.35)
+              );
+
+            return {
+              width: width,
+              height: height
+            };
+
+          }
 
         },
 
@@ -492,7 +482,7 @@
 
         function(errorMessage) {
 
-          // Abaikan
+          // Abaikan error scan sementara
 
         }
 
@@ -500,6 +490,9 @@
 
 
       .catch(function(error) {
+
+        console.log("KAMERA ERROR:", error);
+
 
         document.getElementById("hasil").innerHTML =
 
@@ -588,6 +581,7 @@
 
             /*
              * GAMBAR SELALU DITAMPILKAN
+             *
              * selama PROSES CETAK punya gambar.
              */
 
@@ -975,10 +969,10 @@
 
 
       /*
-       * JANGAN HAPUS GAMBAR DI SINI.
+       * GAMBAR TIDAK DIHAPUS DI SINI.
        *
-       * Kalau gambar sudah ditemukan,
-       * tetap tampil sampai siap scan berikutnya.
+       * Jadi kalau PROSES CETAK sudah punya
+       * desain final, gambar tetap terlihat.
        */
 
 
@@ -1070,6 +1064,7 @@
 
       }
     );
+
 
   </script>
 
