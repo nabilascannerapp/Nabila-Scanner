@@ -439,7 +439,6 @@
       const kotak =
         document.getElementById("gambarDesain");
 
-
       const gambar =
         document.getElementById("previewDesain");
 
@@ -451,7 +450,6 @@
         gambar.src = "";
 
         return;
-
       }
 
 
@@ -483,33 +481,23 @@
         });
 
 
-      /*
-       * INI KONFIGURASI KAMERA YANG
-       * SUDAH TERBUKTI BERHASIL.
-       */
+      // ===================================================
+      // KONFIGURASI KAMERA
+      // ===================================================
 
       scanner.start(
 
         {
-
           facingMode: "environment"
-
         },
 
-
         {
-
           fps: 10,
 
-
           qrbox: {
-
             width: 300,
-
             height: 100
-
           }
-
         },
 
 
@@ -520,35 +508,38 @@
         function(decodedText) {
 
 
+          // Jangan proses scan baru kalau request
+          // sebelumnya masih berjalan.
+
           if (sedangMemproses) return;
 
 
+          // =================================================
+          // NORMALISASI NOMOR BARCODE
+          // =================================================
+
           nomorPesanan =
-  decodedText
-    .trim()
-    .replace(/^\]C1/, "");
+            decodedText
+              .trim()
+              .replace(/^\]C1/, "");
 
 
           if (!nomorPesanan) return;
-          
-tampilkanGambarDesain("");
+
+
+          // Bersihkan gambar dari scan sebelumnya.
+
+          tampilkanGambarDesain("");
+
+
+          // Kunci proses sementara.
 
           sedangMemproses = true;
 
 
-          /*
-           * JEDA SCANNER
-           * supaya tidak membaca barcode berkali-kali.
-           */
-
-          try {
-
-            scanner.pause(true);
-
-          }
-
-          catch (e) {}
-
+          // =================================================
+          // TAMPILKAN STATUS MENGECEK
+          // =================================================
 
           document.getElementById("hasil").innerHTML =
 
@@ -563,6 +554,10 @@ tampilkanGambarDesain("");
             "none";
 
 
+          // =================================================
+          // KIRIM KE WEB APP
+          // =================================================
+
           cekPesanan(nomorPesanan);
 
         },
@@ -574,12 +569,8 @@ tampilkanGambarDesain("");
 
         function(errorMessage) {
 
-          /*
-           * DIABAIKAN.
-           *
-           * Error seperti barcode belum terlihat,
-           * barcode terlalu jauh, dll normal terjadi.
-           */
+          // Sengaja dikosongkan.
+          // Error ketika barcode belum terbaca adalah normal.
 
         }
 
@@ -587,7 +578,6 @@ tampilkanGambarDesain("");
 
 
       .then(function() {
-
 
         document.getElementById("hasil").innerHTML =
 
@@ -597,12 +587,10 @@ tampilkanGambarDesain("");
 
           "Arahkan kamera ke barcode pesanan.";
 
-
       })
 
 
       .catch(function(error) {
-
 
         console.log(
           "KAMERA ERROR:",
@@ -637,8 +625,58 @@ tampilkanGambarDesain("");
         "hasilCek_" + Date.now();
 
 
+      let selesaiRequest = false;
+
+
+      // ===================================================
+      // TIMEOUT REQUEST
+      // ===================================================
+
+      const timeoutRequest = setTimeout(function() {
+
+
+        if (selesaiRequest) return;
+
+
+        selesaiRequest = true;
+
+
+        if (window[callbackName]) {
+
+          delete window[callbackName];
+
+        }
+
+
+        tampilkanPesan(
+
+          "❌ REQUEST TERLALU LAMA",
+
+          "Sistem tidak merespons dalam 10 detik.\n\n" +
+
+          "Coba scan lagi."
+
+        );
+
+
+      }, 10000);
+
+
+      // ===================================================
+      // CALLBACK JSONP
+      // ===================================================
+
       window[callbackName] =
         function(data) {
+
+
+          if (selesaiRequest) return;
+
+
+          selesaiRequest = true;
+
+
+          clearTimeout(timeoutRequest);
 
 
           try {
@@ -719,13 +757,6 @@ tampilkanGambarDesain("");
             // =================================================
             // GAMBAR DESAIN
             // =================================================
-
-            /*
-             * Gambar berasal dari PROSES CETAK.
-             *
-             * Jadi gambar tetap bisa muncul walaupun
-             * status masih ANTRIAN CETAK atau SEDANG CETAK.
-             */
 
             tampilkanGambarDesain(
 
@@ -944,10 +975,23 @@ tampilkanGambarDesain("");
 
         "&callback=" +
 
-        callbackName;
+        callbackName +
+
+        "&t=" +
+
+        Date.now();
 
 
       script.onerror = function() {
+
+
+        if (selesaiRequest) return;
+
+
+        selesaiRequest = true;
+
+
+        clearTimeout(timeoutRequest);
 
 
         tampilkanPesan(
@@ -989,8 +1033,56 @@ tampilkanGambarDesain("");
         "hasilBeres_" + Date.now();
 
 
+      let selesaiRequest = false;
+
+
+      // ===================================================
+      // TIMEOUT
+      // ===================================================
+
+      const timeoutRequest = setTimeout(function() {
+
+
+        if (selesaiRequest) return;
+
+
+        selesaiRequest = true;
+
+
+        if (window[callbackName]) {
+
+          delete window[callbackName];
+
+        }
+
+
+        tampilkanPesan(
+
+          "❌ REQUEST TERLALU LAMA",
+
+          "Sistem tidak merespons.\n\nCoba scan lagi."
+
+        );
+
+
+      }, 10000);
+
+
+      // ===================================================
+      // CALLBACK
+      // ===================================================
+
       window[callbackName] =
         function(data) {
+
+
+          if (selesaiRequest) return;
+
+
+          selesaiRequest = true;
+
+
+          clearTimeout(timeoutRequest);
 
 
           try {
@@ -1106,10 +1198,23 @@ tampilkanGambarDesain("");
 
         "&callback=" +
 
-        callbackName;
+        callbackName +
+
+        "&t=" +
+
+        Date.now();
 
 
       script.onerror = function() {
+
+
+        if (selesaiRequest) return;
+
+
+        selesaiRequest = true;
+
+
+        clearTimeout(timeoutRequest);
 
 
         tampilkanPesan(
@@ -1179,12 +1284,9 @@ tampilkanGambarDesain("");
         "none";
 
 
-      /*
-       * GAMBAR TIDAK DIHAPUS DI SINI.
-       *
-       * Jadi desain final tetap terlihat selama
-       * hasil scan sedang ditampilkan.
-       */
+      // ===================================================
+      // GAMBAR DESAIN TIDAK DIHAPUS
+      // ===================================================
 
 
       setTimeout(function() {
@@ -1194,6 +1296,8 @@ tampilkanGambarDesain("");
 
         sedangMemproses = false;
 
+        statusPesananSaatIni = "";
+
 
         document.getElementById("hasil").innerHTML =
 
@@ -1202,76 +1306,6 @@ tampilkanGambarDesain("");
           "<br><br>" +
 
           "Arahkan kamera ke barcode pesanan.";
-
-
-    
-
-
-        // =================================================
-        // LANJUTKAN SCANNER
-        // =================================================
-
-        if (scanner) {
-
-
-          try {
-
-            scanner.resume();
-
-          }
-
-
-          catch (e) {
-
-
-            try {
-
-
-              scanner.stop()
-
-                .then(function() {
-
-
-                  scanner.clear();
-
-                  scanner = null;
-
-                  mulaiScanner();
-
-                })
-
-
-                .catch(function() {
-
-
-                  scanner = null;
-
-                  mulaiScanner();
-
-                });
-
-            }
-
-
-            catch (err) {
-
-
-              scanner = null;
-
-              mulaiScanner();
-
-            }
-
-          }
-
-        }
-
-
-        else {
-
-          mulaiScanner();
-
-        }
 
 
       }, 2500);
