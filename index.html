@@ -137,7 +137,35 @@
 
       border-radius: 10px;
     }
+/* =====================================================
+   DAFTAR BEBERAPA DESAIN
+   ===================================================== */
 
+#daftarDesain {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.itemDesain {
+  padding: 12px;
+  background: #f7f7f7;
+  border-radius: 12px;
+}
+
+.itemDesain img {
+  display: block;
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.statusDesain {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
 
     /* =====================================================
        PILIHAN
@@ -335,20 +363,13 @@
 
   <div id="gambarDesain">
 
-    <div class="judulGambar">
-
-      🖼️ DESAIN FINAL
-
-    </div>
-
-
-    <img
-      id="previewDesain"
-      src=""
-      alt="Desain Final"
-    >
-
+  <div class="judulGambar">
+    🖼️ DESAIN FINAL
   </div>
+
+  <div id="daftarDesain"></div>
+
+</div>
 
 
   <!-- =====================================================
@@ -436,28 +457,39 @@
 
     function tampilkanGambarDesain(url) {
 
-      const kotak =
-        document.getElementById("gambarDesain");
+  const kotak =
+    document.getElementById("gambarDesain");
 
-      const gambar =
-        document.getElementById("previewDesain");
+  const daftar =
+    document.getElementById("daftarDesain");
 
+  daftar.innerHTML = "";
 
-      if (!url) {
+  if (!url) {
 
-        kotak.style.display = "none";
+    kotak.style.display = "none";
 
-        gambar.src = "";
+    return;
+  }
 
-        return;
-      }
+  const item =
+    document.createElement("div");
 
+  item.className = "itemDesain";
 
-      gambar.src = url;
+  const gambar =
+    document.createElement("img");
 
-      kotak.style.display = "block";
+  gambar.src = url;
 
-    }
+  gambar.alt = "Desain Final";
+
+  item.appendChild(gambar);
+
+  daftar.appendChild(item);
+
+  kotak.style.display = "block";
+}
 
 
     // =====================================================
@@ -754,15 +786,98 @@
               status;
 
 
-            // =================================================
-            // GAMBAR DESAIN
-            // =================================================
+           // =================================================
+// SEMUA DESAIN
+// =================================================
 
-            tampilkanGambarDesain(
+const daftar =
+  document.getElementById("daftarDesain");
 
-              data.gambar || ""
+daftar.innerHTML = "";
 
-            );
+if (
+  data.items &&
+  data.items.length > 0
+) {
+
+  data.items.forEach(function(item, index) {
+
+    const kotak =
+      document.createElement("div");
+
+    kotak.className = "itemDesain";
+
+    // NOMOR DESAIN
+    const judul =
+      document.createElement("div");
+
+    judul.innerText =
+      "DESAIN " + (index + 1);
+
+    judul.style.fontSize = "18px";
+    judul.style.fontWeight = "bold";
+    judul.style.marginBottom = "8px";
+
+    kotak.appendChild(judul);
+
+    // GAMBAR
+    if (item.gambar) {
+
+      const gambar =
+        document.createElement("img");
+
+      gambar.src = item.gambar;
+
+      gambar.alt =
+        "Desain " + (index + 1);
+
+      kotak.appendChild(gambar);
+
+    } else {
+
+      const tidakAdaGambar =
+        document.createElement("div");
+
+      tidakAdaGambar.innerText =
+        "🖼️ Gambar desain tidak tersedia";
+
+      tidakAdaGambar.style.padding =
+        "20px";
+
+      kotak.appendChild(tidakAdaGambar);
+    }
+
+    // STATUS
+    const status =
+      document.createElement("div");
+
+    status.className =
+      "statusDesain";
+
+    status.innerText =
+      "STATUS: " +
+      (item.status || "TIDAK DIKETAHUI");
+
+    kotak.appendChild(status);
+
+    daftar.appendChild(kotak);
+
+  });
+
+  document.getElementById(
+    "gambarDesain"
+  ).style.display = "block";
+
+}
+else {
+
+  // Kompatibilitas kalau backend
+  // hanya mengirim satu gambar
+
+  tampilkanGambarDesain(
+    data.gambar || ""
+  );
+}
 
 
             // =================================================
