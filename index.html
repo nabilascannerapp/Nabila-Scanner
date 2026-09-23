@@ -435,7 +435,7 @@
     // =====================================================
 
     const API_URL =
-      "https://script.google.com/macros/s/AKfycbzVZ9tnWj06hHz-eIzE47HwTeUM0y6yPhiOjRYXWLxlRFq6aAJnVDfZ5FLDdkPr_SGoZA/exec";
+      "https://script.google.com/macros/s/AKfycbxkfKVNEjgNEqK8MZNP4EEo9C1heIc4fi3Zq6At44fGQBLgFktxtXxf9wSw1xpdzCQ/exec";
 
 
     // =====================================================
@@ -466,9 +466,7 @@
   daftar.innerHTML = "";
 
   if (!url) {
-
     kotak.style.display = "none";
-
     return;
   }
 
@@ -481,7 +479,6 @@
     document.createElement("img");
 
   gambar.src = url;
-
   gambar.alt = "Desain Final";
 
   item.appendChild(gambar);
@@ -807,7 +804,11 @@ if (
 
     kotak.className = "itemDesain";
 
-    // NOMOR DESAIN
+
+    // =================================================
+    // JUDUL DESAIN
+    // =================================================
+
     const judul =
       document.createElement("div");
 
@@ -816,11 +817,15 @@ if (
 
     judul.style.fontSize = "18px";
     judul.style.fontWeight = "bold";
-    judul.style.marginBottom = "8px";
+    judul.style.marginBottom = "10px";
 
     kotak.appendChild(judul);
 
+
+    // =================================================
     // GAMBAR
+    // =================================================
+
     if (item.gambar) {
 
       const gambar =
@@ -847,7 +852,11 @@ if (
       kotak.appendChild(tidakAdaGambar);
     }
 
+
+    // =================================================
     // STATUS
+    // =================================================
+
     const status =
       document.createElement("div");
 
@@ -860,6 +869,107 @@ if (
 
     kotak.appendChild(status);
 
+
+    // =================================================
+    // TOMBOL BERES
+    // =================================================
+
+    if (
+      item.status === "FINISHING" ||
+      item.status === "ANTRIAN PACKING"
+    ) {
+
+      const tombolBeres =
+        document.createElement("button");
+
+      tombolBeres.innerText =
+        item.status === "FINISHING"
+          ? "✅ BERES NIH"
+          : "📦 IYA UDAH";
+
+      tombolBeres.style.background =
+        "#20a464";
+
+      tombolBeres.style.color =
+        "white";
+
+      tombolBeres.onclick =
+        function() {
+
+          prosesBeresDesain(
+            item.row,
+            tombolBeres,
+            status
+          );
+
+        };
+
+      kotak.appendChild(tombolBeres);
+
+
+      // =================================================
+      // TOMBOL BELUM
+      // =================================================
+
+      const tombolBelum =
+        document.createElement("button");
+
+      tombolBelum.innerText =
+        item.status === "FINISHING"
+          ? "❌ BELUM EUY"
+          : "❌ BELUM HEHE";
+
+      tombolBelum.style.background =
+        "#e64b4b";
+
+      tombolBelum.style.color =
+        "white";
+
+      tombolBelum.onclick =
+        function() {
+
+          status.innerText =
+            "STATUS: " +
+            item.status;
+
+        };
+
+      kotak.appendChild(tombolBelum);
+
+    }
+
+
+    // =================================================
+    // SUDAH PACKING
+    // =================================================
+
+    if (
+      item.status === "SUDAH PACKING"
+    ) {
+
+      const selesai =
+        document.createElement("div");
+
+      selesai.innerText =
+        "🟢 SUDAH PACKING";
+
+      selesai.style.marginTop =
+        "12px";
+
+      selesai.style.fontSize =
+        "18px";
+
+      selesai.style.color =
+        "#20a464";
+
+      selesai.style.fontWeight =
+        "bold";
+
+      kotak.appendChild(selesai);
+
+    }
+
+
     daftar.appendChild(kotak);
 
   });
@@ -868,6 +978,14 @@ if (
     "gambarDesain"
   ).style.display = "block";
 
+}
+else {
+
+  tampilkanGambarDesain(
+    data.gambar || ""
+  );
+
+}
 }
 else {
 
@@ -1127,7 +1245,183 @@ else {
 
     }
 
+function prosesBeresDesain(
+  row,
+  tombol,
+  statusElement
+) {
 
+  tombol.disabled = true;
+
+  tombol.innerText =
+    "⏳ MEMPROSES...";
+
+
+  const callbackName =
+    "hasilBeresDesain_" +
+    Date.now();
+
+
+  let selesaiRequest = false;
+
+
+  const timeoutRequest =
+    setTimeout(function() {
+
+      if (selesaiRequest) return;
+
+      selesaiRequest = true;
+
+      if (window[callbackName]) {
+        delete window[callbackName];
+      }
+
+      tombol.disabled = false;
+
+      tombol.innerText =
+        "❌ COBA LAGI";
+
+    }, 10000);
+
+
+  // =====================================================
+  // CALLBACK
+  // =====================================================
+
+  window[callbackName] =
+    function(data) {
+
+      if (selesaiRequest) return;
+
+      selesaiRequest = true;
+
+      clearTimeout(timeoutRequest);
+
+
+      try {
+
+        if (
+          data &&
+          data.success &&
+          data.berubah
+        ) {
+
+          statusElement.innerText =
+            "STATUS: " +
+            data.status;
+
+
+          // =================================================
+          // JIKA SUDAH ANTRIAN PACKING
+          // =================================================
+
+          if (
+            data.status ===
+            "ANTRIAN PACKING"
+          ) {
+
+            tombol.innerText =
+              "📦 IYA UDAH";
+
+          }
+
+
+          // =================================================
+          // JIKA SUDAH PACKING
+          // =================================================
+
+          else if (
+            data.status ===
+            "SUDAH PACKING"
+          ) {
+
+            tombol.style.display =
+              "none";
+
+            const selesai =
+              document.createElement("div");
+
+            selesai.innerText =
+              "🟢 SUDAH PACKING";
+
+            selesai.style.marginTop =
+              "12px";
+
+            selesai.style.fontSize =
+              "18px";
+
+            selesai.style.color =
+              "#20a464";
+
+            selesai.style.fontWeight =
+              "bold";
+
+            tombol.parentElement
+              .appendChild(selesai);
+
+          }
+
+        }
+        else {
+
+          tombol.disabled = false;
+
+          tombol.innerText =
+            "⚠️ COBA LAGI";
+
+        }
+
+      }
+      finally {
+
+        delete window[callbackName];
+
+      }
+
+    };
+
+
+  // =====================================================
+  // KIRIM ROW PACKING
+  // =====================================================
+
+  const script =
+    document.createElement("script");
+
+
+  script.src =
+    API_URL +
+    "?action=beres" +
+    "&nomor=" +
+    encodeURIComponent(row) +
+    "&callback=" +
+    callbackName +
+    "&t=" +
+    Date.now();
+
+
+  script.onerror =
+    function() {
+
+      if (selesaiRequest) return;
+
+      selesaiRequest = true;
+
+      clearTimeout(timeoutRequest);
+
+      tombol.disabled = false;
+
+      tombol.innerText =
+        "❌ COBA LAGI";
+
+      delete window[callbackName];
+
+    };
+
+
+  document.body.appendChild(script);
+
+}
     // =====================================================
     // TOMBOL BERES
     // =====================================================
