@@ -137,35 +137,7 @@
 
       border-radius: 10px;
     }
-/* =====================================================
-   DAFTAR BEBERAPA DESAIN
-   ===================================================== */
 
-#daftarDesain {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.itemDesain {
-  padding: 12px;
-  background: #f7f7f7;
-  border-radius: 12px;
-}
-
-.itemDesain img {
-  display: block;
-  width: 100%;
-  max-height: 500px;
-  object-fit: contain;
-  border-radius: 10px;
-}
-
-.statusDesain {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: bold;
-}
 
     /* =====================================================
        PILIHAN
@@ -363,13 +335,20 @@
 
   <div id="gambarDesain">
 
-  <div class="judulGambar">
-    🖼️ DESAIN FINAL
+    <div class="judulGambar">
+
+      🖼️ DESAIN FINAL
+
+    </div>
+
+
+    <img
+      id="previewDesain"
+      src=""
+      alt="Desain Final"
+    >
+
   </div>
-
-  <div id="daftarDesain"></div>
-
-</div>
 
 
   <!-- =====================================================
@@ -435,7 +414,7 @@
     // =====================================================
 
     const API_URL =
-      "https://script.google.com/macros/s/AKfycbxkfKVNEjgNEqK8MZNP4EEo9C1heIc4fi3Zq6At44fGQBLgFktxtXxf9wSw1xpdzCQ/exec";
+      "https://script.google.com/macros/s/AKfycbxmWNd48soEam9eivBy7QbnduQebzPEpwbhrzK_XHfBgt3n_g1O1PjHfDGCHjWVflK9/exec";
 
 
     // =====================================================
@@ -457,36 +436,28 @@
 
     function tampilkanGambarDesain(url) {
 
-  const kotak =
-    document.getElementById("gambarDesain");
+      const kotak =
+        document.getElementById("gambarDesain");
 
-  const daftar =
-    document.getElementById("daftarDesain");
+      const gambar =
+        document.getElementById("previewDesain");
 
-  daftar.innerHTML = "";
 
-  if (!url) {
-    kotak.style.display = "none";
-    return;
-  }
+      if (!url) {
 
-  const item =
-    document.createElement("div");
+        kotak.style.display = "none";
 
-  item.className = "itemDesain";
+        gambar.src = "";
 
-  const gambar =
-    document.createElement("img");
+        return;
+      }
 
-  gambar.src = url;
-  gambar.alt = "Desain Final";
 
-  item.appendChild(gambar);
+      gambar.src = url;
 
-  daftar.appendChild(item);
+      kotak.style.display = "block";
 
-  kotak.style.display = "block";
-}
+    }
 
 
     // =====================================================
@@ -783,219 +754,15 @@
               status;
 
 
-           // =================================================
-// SEMUA DESAIN
-// =================================================
+            // =================================================
+            // GAMBAR DESAIN
+            // =================================================
 
-const daftar =
-  document.getElementById("daftarDesain");
+            tampilkanGambarDesain(
 
-daftar.innerHTML = "";
+              data.gambar || ""
 
-if (
-  data.items &&
-  data.items.length > 0
-) {
-
-  data.items.forEach(function(item, index) {
-
-    const kotak =
-      document.createElement("div");
-
-    kotak.className = "itemDesain";
-
-
-    // =================================================
-    // JUDUL DESAIN
-    // =================================================
-
-    const judul =
-      document.createElement("div");
-
-    judul.innerText =
-      "DESAIN " + (index + 1);
-
-    judul.style.fontSize = "18px";
-    judul.style.fontWeight = "bold";
-    judul.style.marginBottom = "10px";
-
-    kotak.appendChild(judul);
-
-
-    // =================================================
-    // GAMBAR
-    // =================================================
-
-    if (item.gambar) {
-
-      const gambar =
-        document.createElement("img");
-
-      gambar.src = item.gambar;
-
-      gambar.alt =
-        "Desain " + (index + 1);
-
-      kotak.appendChild(gambar);
-
-    } else {
-
-      const tidakAdaGambar =
-        document.createElement("div");
-
-      tidakAdaGambar.innerText =
-        "🖼️ Gambar desain tidak tersedia";
-
-      tidakAdaGambar.style.padding =
-        "20px";
-
-      kotak.appendChild(tidakAdaGambar);
-    }
-
-
-    // =================================================
-    // STATUS
-    // =================================================
-
-    const status =
-      document.createElement("div");
-
-    status.className =
-      "statusDesain";
-
-    status.innerText =
-      "STATUS: " +
-      (item.status || "TIDAK DIKETAHUI");
-
-    kotak.appendChild(status);
-
-
-    // =================================================
-    // TOMBOL BERES
-    // =================================================
-
-    if (
-      item.status === "FINISHING" ||
-      item.status === "ANTRIAN PACKING"
-    ) {
-
-      const tombolBeres =
-        document.createElement("button");
-
-      tombolBeres.innerText =
-        item.status === "FINISHING"
-          ? "✅ BERES NIH"
-          : "📦 IYA UDAH";
-
-      tombolBeres.style.background =
-        "#20a464";
-
-      tombolBeres.style.color =
-        "white";
-
-      tombolBeres.onclick =
-        function() {
-
-          prosesBeresDesain(
-            item.row,
-            tombolBeres,
-            status
-          );
-
-        };
-
-      kotak.appendChild(tombolBeres);
-
-
-      // =================================================
-      // TOMBOL BELUM
-      // =================================================
-
-      const tombolBelum =
-        document.createElement("button");
-
-      tombolBelum.innerText =
-        item.status === "FINISHING"
-          ? "❌ BELUM EUY"
-          : "❌ BELUM HEHE";
-
-      tombolBelum.style.background =
-        "#e64b4b";
-
-      tombolBelum.style.color =
-        "white";
-
-      tombolBelum.onclick =
-        function() {
-
-          status.innerText =
-            "STATUS: " +
-            item.status;
-
-        };
-
-      kotak.appendChild(tombolBelum);
-
-    }
-
-
-    // =================================================
-    // SUDAH PACKING
-    // =================================================
-
-    if (
-      item.status === "SUDAH PACKING"
-    ) {
-
-      const selesai =
-        document.createElement("div");
-
-      selesai.innerText =
-        "🟢 SUDAH PACKING";
-
-      selesai.style.marginTop =
-        "12px";
-
-      selesai.style.fontSize =
-        "18px";
-
-      selesai.style.color =
-        "#20a464";
-
-      selesai.style.fontWeight =
-        "bold";
-
-      kotak.appendChild(selesai);
-
-    }
-
-
-    daftar.appendChild(kotak);
-
-  });
-
-  document.getElementById(
-    "gambarDesain"
-  ).style.display = "block";
-
-}
-else {
-
-  tampilkanGambarDesain(
-    data.gambar || ""
-  );
-
-}
-}
-else {
-
-  // Kompatibilitas kalau backend
-  // hanya mengirim satu gambar
-
-  tampilkanGambarDesain(
-    data.gambar || ""
-  );
-}
+            );
 
 
             // =================================================
@@ -1245,183 +1012,7 @@ else {
 
     }
 
-function prosesBeresDesain(
-  row,
-  tombol,
-  statusElement
-) {
 
-  tombol.disabled = true;
-
-  tombol.innerText =
-    "⏳ MEMPROSES...";
-
-
-  const callbackName =
-    "hasilBeresDesain_" +
-    Date.now();
-
-
-  let selesaiRequest = false;
-
-
-  const timeoutRequest =
-    setTimeout(function() {
-
-      if (selesaiRequest) return;
-
-      selesaiRequest = true;
-
-      if (window[callbackName]) {
-        delete window[callbackName];
-      }
-
-      tombol.disabled = false;
-
-      tombol.innerText =
-        "❌ COBA LAGI";
-
-    }, 10000);
-
-
-  // =====================================================
-  // CALLBACK
-  // =====================================================
-
-  window[callbackName] =
-    function(data) {
-
-      if (selesaiRequest) return;
-
-      selesaiRequest = true;
-
-      clearTimeout(timeoutRequest);
-
-
-      try {
-
-        if (
-          data &&
-          data.success &&
-          data.berubah
-        ) {
-
-          statusElement.innerText =
-            "STATUS: " +
-            data.status;
-
-
-          // =================================================
-          // JIKA SUDAH ANTRIAN PACKING
-          // =================================================
-
-          if (
-            data.status ===
-            "ANTRIAN PACKING"
-          ) {
-
-            tombol.innerText =
-              "📦 IYA UDAH";
-
-          }
-
-
-          // =================================================
-          // JIKA SUDAH PACKING
-          // =================================================
-
-          else if (
-            data.status ===
-            "SUDAH PACKING"
-          ) {
-
-            tombol.style.display =
-              "none";
-
-            const selesai =
-              document.createElement("div");
-
-            selesai.innerText =
-              "🟢 SUDAH PACKING";
-
-            selesai.style.marginTop =
-              "12px";
-
-            selesai.style.fontSize =
-              "18px";
-
-            selesai.style.color =
-              "#20a464";
-
-            selesai.style.fontWeight =
-              "bold";
-
-            tombol.parentElement
-              .appendChild(selesai);
-
-          }
-
-        }
-        else {
-
-          tombol.disabled = false;
-
-          tombol.innerText =
-            "⚠️ COBA LAGI";
-
-        }
-
-      }
-      finally {
-
-        delete window[callbackName];
-
-      }
-
-    };
-
-
-  // =====================================================
-  // KIRIM ROW PACKING
-  // =====================================================
-
-  const script =
-    document.createElement("script");
-
-
-  script.src =
-    API_URL +
-    "?action=beres" +
-    "&nomor=" +
-    encodeURIComponent(row) +
-    "&callback=" +
-    callbackName +
-    "&t=" +
-    Date.now();
-
-
-  script.onerror =
-    function() {
-
-      if (selesaiRequest) return;
-
-      selesaiRequest = true;
-
-      clearTimeout(timeoutRequest);
-
-      tombol.disabled = false;
-
-      tombol.innerText =
-        "❌ COBA LAGI";
-
-      delete window[callbackName];
-
-    };
-
-
-  document.body.appendChild(script);
-
-}
     // =====================================================
     // TOMBOL BERES
     // =====================================================
