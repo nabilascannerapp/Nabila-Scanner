@@ -439,7 +439,6 @@
       const kotak =
         document.getElementById("gambarDesain");
 
-
       const gambar =
         document.getElementById("previewDesain");
 
@@ -451,7 +450,6 @@
         gambar.src = "";
 
         return;
-
       }
 
 
@@ -483,10 +481,6 @@
         });
 
 
-      /*
-       * INI KONFIGURASI KAMERA YANG
-       * SUDAH TERBUKTI BERHASIL.
-       */
       // ===================================================
       // KONFIGURASI KAMERA
       // ===================================================
@@ -494,25 +488,16 @@
       scanner.start(
 
         {
-
           facingMode: "environment"
-
         },
 
-
         {
-
           fps: 10,
 
-
           qrbox: {
-
             width: 300,
-
             height: 100
-
           }
-
         },
 
 
@@ -534,37 +519,23 @@
           // =================================================
 
           nomorPesanan =
-  decodedText
-    .trim()
-    .replace(/^\]C1/, "");
             decodedText
               .trim()
               .replace(/^\]C1/, "");
 
 
           if (!nomorPesanan) return;
-          
-tampilkanGambarDesain("");
 
-          sedangMemproses = true;
 
           // Bersihkan gambar dari scan sebelumnya.
 
-          /*
-           * JEDA SCANNER
-           * supaya tidak membaca barcode berkali-kali.
-           */
           tampilkanGambarDesain("");
 
-          try {
 
-            scanner.pause(true);
           // Kunci proses sementara.
 
-          }
           sedangMemproses = true;
 
-          catch (e) {}
 
           // =================================================
           // TAMPILKAN STATUS MENGECEK
@@ -598,12 +569,6 @@ tampilkanGambarDesain("");
 
         function(errorMessage) {
 
-          /*
-           * DIABAIKAN.
-           *
-           * Error seperti barcode belum terlihat,
-           * barcode terlalu jauh, dll normal terjadi.
-           */
           // Sengaja dikosongkan.
           // Error ketika barcode belum terbaca adalah normal.
 
@@ -614,7 +579,6 @@ tampilkanGambarDesain("");
 
       .then(function() {
 
-
         document.getElementById("hasil").innerHTML =
 
           "📷 <b>SIAP SCAN</b>" +
@@ -623,12 +587,10 @@ tampilkanGambarDesain("");
 
           "Arahkan kamera ke barcode pesanan.";
 
-
       })
 
 
       .catch(function(error) {
-
 
         console.log(
           "KAMERA ERROR:",
@@ -795,13 +757,6 @@ tampilkanGambarDesain("");
             // =================================================
             // GAMBAR DESAIN
             // =================================================
-
-            /*
-             * Gambar berasal dari PROSES CETAK.
-             *
-             * Jadi gambar tetap bisa muncul walaupun
-             * status masih ANTRIAN CETAK atau SEDANG CETAK.
-             */
 
             tampilkanGambarDesain(
 
@@ -1020,7 +975,6 @@ tampilkanGambarDesain("");
 
         "&callback=" +
 
-        callbackName;
         callbackName +
 
         "&t=" +
@@ -1244,7 +1198,6 @@ tampilkanGambarDesain("");
 
         "&callback=" +
 
-        callbackName;
         callbackName +
 
         "&t=" +
@@ -1331,12 +1284,6 @@ tampilkanGambarDesain("");
         "none";
 
 
-      /*
-       * GAMBAR TIDAK DIHAPUS DI SINI.
-       *
-       * Jadi desain final tetap terlihat selama
-       * hasil scan sedang ditampilkan.
-       */
       // ===================================================
       // GAMBAR DESAIN TIDAK DIHAPUS
       // ===================================================
@@ -1359,76 +1306,6 @@ tampilkanGambarDesain("");
           "<br><br>" +
 
           "Arahkan kamera ke barcode pesanan.";
-
-
-    
-
-
-        // =================================================
-        // LANJUTKAN SCANNER
-        // =================================================
-
-        if (scanner) {
-
-
-          try {
-
-            scanner.resume();
-
-          }
-
-
-          catch (e) {
-
-
-            try {
-
-
-              scanner.stop()
-
-                .then(function() {
-
-
-                  scanner.clear();
-
-                  scanner = null;
-
-                  mulaiScanner();
-
-                })
-
-
-                .catch(function() {
-
-
-                  scanner = null;
-
-                  mulaiScanner();
-
-                });
-
-            }
-
-
-            catch (err) {
-
-
-              scanner = null;
-
-              mulaiScanner();
-
-            }
-
-          }
-
-        }
-
-
-        else {
-
-          mulaiScanner();
-
-        }
 
 
       }, 2500);
